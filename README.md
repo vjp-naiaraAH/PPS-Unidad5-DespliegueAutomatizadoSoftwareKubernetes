@@ -1,4 +1,4 @@
-# Actividad - Despliegue automatizado de software: Kubernetes
+# Actividad - Despliegue automatizado de software: Kubernetes - naiara
 ## ELIMINANDO CLUSTER DE MINIKUBE
 Elimino el cluster que he estado usando durante toda la duración del vídeo.
 ```bash
@@ -21,13 +21,13 @@ cd store-app
 
 Me descargo los siguientes archivos:
 + [Dockerfile para crear la imágen](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/Dockerfile)
-+ [Manifiesto Kubernetes para desplegar store-app](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-k8s.yaml)
++ [Manifiesto ***Kubernetes*** para desplegar store-app](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-k8s.yaml)
 ![](/images/3.png)
 
 Imágen de los archivs ya creados y colocados en la carpeta de store-app
 ![](/images/4.png)
 
-Antes de aplicar el manifiesto, entrar dentro del entorno docker y construir la imágen de la app dentro del entorno de Minikube para que Kubernetes puede usarla localmente ejecutando lo siguiente:
+Antes de aplicar el manifiesto, entrar dentro del entorno docker y construir la imágen de la app dentro del entorno de Minikube para que ***Kubernetes*** puede usarla localmente ejecutando lo siguiente:
 ```bash
 # iniciar minikube con un perfil llamado store-app.
 minikube start --nodes 3 -p store-app
@@ -44,7 +44,7 @@ minikube -p store-app image ls
 ---
 
 ## DESPLIEGUE
-Hago el despliegue en kubernetes.
+Hago el despliegue en ***kubernetes***.
 ```bash
 # aplica manifiesto kubernetes de despliegue
 kubectl apply -f store-app-k8s.yaml  
@@ -68,61 +68,61 @@ y se abrirá la aplicación en una web en firefox
 
 ## VERIFICACIÓN
 Compruebo el estado del despliegue.
-1. Muestra todos los pods en ejecución, su estado (Running), si están listos (1/1), cuántas veces reiniciaron y cuánto tiempo llevan activos.
+1. **Muestra** todos los **pods en ejecución**, su **estado** (Running), si están listos (1/1), cuántas veces reiniciaron y cuánto tiempo llevan activos.
 ```bash
 kubectl get pods
 ```
 ![](/images/9.png)
 
-2. Muestra todos los Services (servicios) de Kubernetes, su tipo, IP interna, puerto expuesto y edad.
+2. **Muestra** todos los **Services (servicios) de Kubernetes, su tipo, IP interna, puerto expuesto y edad.**
 ```bash
 kubectl get svc
 ```
 ![](/images/10.png)
 
-3. Muestra todos los ConfigMaps existentes en el namespace actual.
+3. **Muestra** todos los **ConfigMaps existentes en el namespace actual.**
 ```bash
 kubectl get configmap
 ```
 ![](/images/11.png)
 
-4. Muestra todos los Secrets existentes.
+4. **Muestra** todos los **Secrets** existentes.
 ```bash
 kubectl get secret
 ```
 ![](/images/12.png)
 
-5.Muestra los logs del Deployment store-app (toma los logs del primer pod por defecto).
+5. **Muestra** los **logs del Deployment store-app** (toma los logs del primer pod por defecto).
 ```bash
 kubectl logs deploy/store-app
 ```
 ![](/images/13.png)
 
-6. Muestra los logs del Deployment de la base de datos.
+6. **Muestra** los **logs del Deployment de la base de datos.**
 ```bash
 kubectl logs deploy/store-db
 ```
 ![](/images/14.png)
 
-7. Permite ejecutar psql (cliente de PostgreSQL) dentro del pod de la base de datos.
+7. **Permite ejecutar psql** (cliente de PostgreSQL) **dentro del pod de la base de datos.**
 ```bash
 kubectl exec -it deploy/store-db -- psql -U app -d store
 ```
 ![](/images/15.png)
 
-8. Muestra la URL externa para acceder a tu servicio store-app.
+8. **Muestra la URL externa para acceder a tu servicio store-app.**
 ```bash
 minikube -p store-app service store-app --url
 ```
 ![](/images/16.png)
 
-9. Muestra un resumen general de los recursos más importantes en el namespace (Pods, Services, Deployments y ReplicaSets).
+9. **Muestra** un **resumen** general **de los recursos más importantes en el namespace** (Pods, Services, Deployments y ReplicaSets).
 ```bash
 kubectl get all
 ```
 ![](/images/17.png)
 
-10. Muestra las IPs internas de los pods que están detrás del Service store-app.
+10. **Muestra las IPs** internas **de los pods que están detrás del Service store-app.**
 ```bash
 kubectl get endpoints store-app
 ```
@@ -130,22 +130,17 @@ kubectl get endpoints store-app
 
 ### RESPUESTAS A LAS PREGUNTAS
 
-**1. ¿Qué diferencia hay entre ConfigMap y Secret?**
+**1. ¿Qué diferencia hay entre ConfigMap y Secret?**  
+El **ConfigMap** se utiliza para almacenar información de configuración no sensible (como URLs, puertos o variables de entorno). En cambio, el **Secret** está pensado para datos sensibles como contraseñas o claves, y Kubernetes los maneja de forma más segura.
 
-La principal diferencia radica en el tipo de información que almacenan y el nivel de seguridad. El ConfigMap se utiliza para guardar datos de configuración no sensibles, como variables de entorno, URLs o parámetros de la aplicación, y los almacena en texto plano. En cambio, el Secret está diseñado para información sensible como contraseñas, claves de API o tokens de autenticación. Aunque internamente también usa base64, Kubernetes lo trata de forma más protegida y evita mostrarlo por defecto en los comandos `get` y `describe`.
+**2. ¿Por qué PostgreSQL usa ClusterIP y no NodePort?**  
+Porque la base de datos solo necesita ser accesible desde dentro del clúster por la aplicación `store-app`. El **ClusterIP** es un servicio interno y más seguro. Usar NodePort expondría la base de datos fuera del clúster, lo cual no es necesario y sería un riesgo de seguridad.
 
-**2. ¿Por qué PostgreSQL usa ClusterIP y no NodePort?**
+**3. ¿Para qué sirve el initContainer?**  
+El **initContainer** es un contenedor que se ejecuta **antes** del contenedor principal de la aplicación. Sirve para realizar comprobaciones o tareas previas, como esperar a que la base de datos esté lista antes de arrancar la aplicación.
 
-Se utiliza ClusterIP porque la base de datos solo necesita ser accesible desde dentro del clúster, concretamente por la aplicación `store-app`. Este tipo de servicio crea una IP interna que solo es reachable por otros pods. Exponer la base de datos con NodePort sería una mala práctica de seguridad, ya que abriría el puerto en todos los nodos del clúster permitiendo accesos externos innecesarios y potencialmente peligrosos.
+**4. ¿Qué pasaría si borras el Secret?**  
+Si borro el Secret, la aplicación no podrá leer la contraseña de la base de datos. Los pods de `store-app` fallarían al iniciar y entrarían en estado **CrashLoopBackOff**, haciendo que la aplicación deje de funcionar.
 
-**3. ¿Para qué sirve el initContainer?**
-
-El initContainer es un contenedor especial que se ejecuta antes que el contenedor principal de la aplicación. Su propósito es realizar tareas de inicialización o comprobaciones previas, como esperar a que la base de datos esté completamente levantada, ejecutar migraciones o cargar configuraciones necesarias. Solo cuando el initContainer finaliza correctamente, Kubernetes procede a iniciar el contenedor principal de la aplicación.
-
-**4. ¿Qué pasaría si borras el Secret?**
-
-Si se elimina el Secret (`store-db-secret`), los pods del deployment `store-app` no podrán obtener la contraseña de la base de datos. Como resultado, la aplicación fallará al intentar conectarse a PostgreSQL, los contenedores entrarán en bucle de reinicios (CrashLoopBackOff) y la aplicación dejará de funcionar. Es un recurso crítico para el correcto funcionamiento del sistema.
-
-**5. ¿Qué cambiarías para que la base de datos tenga almacenamiento persistente?**
-
-Actualmente los datos de PostgreSQL se almacenan en un volumen efímero, por lo que se perderían al eliminar o reiniciar el pod. Para solucionarlo, crearía un PersistentVolumeClaim (PVC) y lo montaría en la ruta `/var/lib/postgresql/data` dentro del contenedor de la base de datos. Además, recomendaría cambiar el Deployment de `store-db` por un StatefulSet, que es más adecuado para aplicaciones con estado como las bases de datos, ya que mantiene identidades persistentes y facilita la gestión del almacenamiento.
+**5. ¿Qué cambiarías para que la base de datos tenga almacenamiento persistente?**  
+Cambiaría el Deployment de `store-db` por un **StatefulSet** y crearía un **PersistentVolumeClaim (PVC)** para montar el volumen en la ruta `/var/lib/postgresql/data`. De esta forma los datos no se perderían aunque se reinicie o elimine el pod.
