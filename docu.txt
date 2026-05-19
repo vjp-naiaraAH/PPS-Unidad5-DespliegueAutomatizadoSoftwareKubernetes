@@ -1,15 +1,10 @@
-# Actividad - Despliegue automatizado de software: Kubernetes
 ## ELIMINANDO CLUSTER DE MINIKUBE
-Elimino el cluster que he estado usando durante toda la duración del vídeo.
-```bash
+1-> Elimino el cluster que he estado usando durante toda la duración del vídeo.
+````bash
 minikube delete -p multinodo
 ```
-![](/images/1.png)
 
----
-
-## PREPARACIÓN DEL LABORATORIO
-Descomprimo store-app-postgree.zip que está para descargar en el [siguiente enlace](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-postgree.zip)
+2-> Descomprimo store-app-postgree.zip que está para descargar en el [siguiente enlace](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-postgree.zip)
 ```bash
 # descargar store-app.zip y colocarla en la carpeta
 # descomprime 
@@ -17,17 +12,14 @@ unzip store-app-postgree.zip
 # comprueba que se ha descomprimido
 cd store-app
 ```
-![](/images/2.png)
 
-Me descargo los siguientes archivos:
+3-> Me descargo los siguientes archivos:
 + [Dockerfile para crear la imágen](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/Dockerfile)
 + [Manifiesto Kubernetes para desplegar store-app](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-k8s.yaml)
-![](/images/3.png)
 
-Imágen de los archivs ya creados y colocados en la carpeta de store-app
-![](/images/4.png)
+4-> Imágen de los archivs ya creados y colocados en la carpeta de store-app
 
-Antes de aplicar el manifiesto, entrar dentro del entorno docker y construir la imágen de la app dentro del entorno de Minikube para que Kubernetes puede usarla localmente ejecutando lo siguiente:
+5-> Antes de aplicar el manifiesto, entrar dentro del entorno docker y construir la imágen de la app dentro del entorno de Minikube para que Kubernetes puede usarla localmente ejecutando lo siguiente:
 ```bash
 # iniciar minikube con un perfil llamado store-app.
 minikube start --nodes 3 -p store-app
@@ -39,94 +31,75 @@ minikube image load store-app:latest --profile=store-app
 minikube -p store-app image ls
 # debe aparecer la imagen store-app:latest
 ```
-![](/images/5.png)
 
----
-
-## DESPLIEGUE
-Hago el despliegue en kubernetes.
+DESPLIEGUE
+6-> Hago el despliegue en kubernetes.
 ```bash
 # aplica manifiesto kubernetes de despliegue
 kubectl apply -f store-app-k8s.yaml  
 ```
-![](/images/6.png)
 
-Para comprobar si todo esta funcionando ejecuto:
+7-> Para comprobar si todo esta funcionando ejecuto:
 ```bash
 minikube -p store-app service store-app
 ```
-![](/images/7.png)
 
-Para comprobar si todo está funcionando ejecuto el comando:
+8-> Para comprobar si todo está funcionando ejecuto el comando:
 ```bash
 minikube -p store-app service store-app
 ```
-y se abrirá la aplicación en una web en firefox
-![](/images/8.png)
+y se abrirá una web en firefox
 
----
-
-## VERIFICACIÓN
+VERIFICACIÓN
 Compruebo el estado del despliegue.
-1. Muestra todos los pods en ejecución, su estado (Running), si están listos (1/1), cuántas veces reiniciaron y cuánto tiempo llevan activos.
+9-> muestra todos los pods en ejecución, su estado (Running), si están listos (1/1), cuántas veces reiniciaron y cuánto tiempo llevan activos.
 ```bash
 kubectl get pods
 ```
-![](/images/9.png)
-
-2. Muestra todos los Services (servicios) de Kubernetes, su tipo, IP interna, puerto expuesto y edad.
+10-> muestra todos los Services (servicios) de Kubernetes, su tipo, IP interna, puerto expuesto y edad.
 ```bash
 kubectl get svc
 ```
-![](/images/10.png)
 
-3. Muestra todos los ConfigMaps existentes en el namespace actual.
+11->muestra todos los ConfigMaps existentes en el namespace actual.
 ```bash
 kubectl get configmap
 ```
-![](/images/11.png)
 
-4. Muestra todos los Secrets existentes.
+12-> muestra todos los Secrets existentes.
 ```bash
 kubectl get secret
 ```
-![](/images/12.png)
 
-5.Muestra los logs del Deployment store-app (toma los logs del primer pod por defecto).
+13-> muestra los logs del Deployment store-app (toma los logs del primer pod por defecto).
 ```bash
 kubectl logs deploy/store-app
 ```
-![](/images/13.png)
 
-6. Muestra los logs del Deployment de la base de datos.
+14-> muestra los logs del Deployment de la base de datos.
 ```bash
 kubectl logs deploy/store-db
 ```
-![](/images/14.png)
 
-7. Permite ejecutar psql (cliente de PostgreSQL) dentro del pod de la base de datos.
+15-> te permite ejecutar psql (cliente de PostgreSQL) dentro del pod de la base de datos.
 ```bash
 kubectl exec -it deploy/store-db -- psql -U app -d store
 ```
-![](/images/15.png)
 
-8. Muestra la URL externa para acceder a tu servicio store-app.
+16-> muestra la URL externa para acceder a tu servicio store-app.
 ```bash
 minikube -p store-app service store-app --url
 ```
-![](/images/16.png)
 
-9. Muestra un resumen general de los recursos más importantes en el namespace (Pods, Services, Deployments y ReplicaSets).
+17->muestra un resumen general de los recursos más importantes en el namespace (Pods, Services, Deployments y ReplicaSets).
 ```bash
 kubectl get all
 ```
-![](/images/17.png)
 
-10. Muestra las IPs internas de los pods que están detrás del Service store-app.
+18-> muestra las IPs internas de los pods que están detrás del Service store-app.
 ```bash
 kubectl get endpoints store-app
 ```
-![](/images/18.png)
 
 ### RESPUESTAS A LAS PREGUNTAS
 
