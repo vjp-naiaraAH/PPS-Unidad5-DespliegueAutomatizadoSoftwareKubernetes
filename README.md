@@ -9,7 +9,7 @@ minikube delete -p multinodo
 ---
 
 ## PREPARACIÓN DEL LABORATORIO
-Descomprimo store-app-postgree.zip que está para descargar en el [siguiente enlace](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-postgree.zip)
+Descomprimo ***store-app-postgree.zip*** que está para descargar en el [siguiente enlace](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-postgree.zip)
 ```bash
 # descargar store-app.zip y colocarla en la carpeta
 # descomprime 
@@ -19,12 +19,12 @@ cd store-app
 ```
 ![](/images/2.png)
 
-Me descargo los siguientes archivos:
+Me **descargo** los siguientes archivos:
 + [Dockerfile para crear la imágen](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/Dockerfile)
 + [Manifiesto ***Kubernetes*** para desplegar store-app](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-k8s.yaml)
 ![](/images/3.png)
 
-Imágen de los archivs ya creados y colocados en la carpeta de store-app
+Imágen de los archivos ya creados y colocados en la carpeta de store-app (concretamente en a raíz)
 ![](/images/4.png)
 
 Antes de aplicar el manifiesto, entrar dentro del entorno docker y construir la imágen de la app dentro del entorno de Minikube para que ***Kubernetes*** puede usarla localmente ejecutando lo siguiente:
@@ -131,16 +131,16 @@ kubectl get endpoints store-app
 ### RESPUESTAS A LAS PREGUNTAS
 
 **1. ¿Qué diferencia hay entre ConfigMap y Secret?**  
-El **ConfigMap** se utiliza para almacenar información de configuración no sensible (como URLs, puertos o variables de entorno). En cambio, el **Secret** está pensado para datos sensibles como contraseñas o claves, y Kubernetes los maneja de forma más segura.
+El **ConfigMap** se utiliza para ***almacenar información de configuración no sensible*** (como *URLs*, *puertos* o *variables de entorno*). En cambio, el **Secret** está pensado para ***datos sensibles*** como *contraseñas* o *claves*, y Kubernetes los maneja de forma **más segura**.
 
 **2. ¿Por qué PostgreSQL usa ClusterIP y no NodePort?**  
-Porque la base de datos solo necesita ser accesible desde dentro del clúster por la aplicación `store-app`. El **ClusterIP** es un servicio interno y más seguro. Usar NodePort expondría la base de datos fuera del clúster, lo cual no es necesario y sería un riesgo de seguridad.
+Porque la base de datos solo necesita ser accesible desde dentro del cluster por la aplicación `store-app`. El **ClusterIP** es un servicio interno y más seguro. Usar **NodePort expondría la base de datos fuera del clúster**, lo cual no es necesario y supondría un riesgo de seguridad.
 
 **3. ¿Para qué sirve el initContainer?**  
-El **initContainer** es un contenedor que se ejecuta **antes** del contenedor principal de la aplicación. Sirve para realizar comprobaciones o tareas previas, como esperar a que la base de datos esté lista antes de arrancar la aplicación.
+El **initContainer** es un **contenedor** que se ejecuta **antes** del **contenedor principal** de la aplicación. Sirve para realizar comprobaciones o tareas previas, como esperar a que la base de datos esté lista antes de arrancar la aplicación.
 
 **4. ¿Qué pasaría si borras el Secret?**  
-Si borro el Secret, la aplicación no podrá leer la contraseña de la base de datos. Los pods de `store-app` fallarían al iniciar y entrarían en estado **CrashLoopBackOff**, haciendo que la aplicación deje de funcionar.
+Si borro el ***Secret***, la aplicación **no podrá leer la contraseña** de la base de datos. Los pods de `store-app` fallaran al iniciar y entraran en estado **CrashLoopBackOff**, haciendo que la aplicación deje de funcionar.
 
 **5. ¿Qué cambiarías para que la base de datos tenga almacenamiento persistente?**  
-Cambiaría el Deployment de `store-db` por un **StatefulSet** y crearía un **PersistentVolumeClaim (PVC)** para montar el volumen en la ruta `/var/lib/postgresql/data`. De esta forma los datos no se perderían aunque se reinicie o elimine el pod.
+Cambiaría el Deployment de `store-db` por un **StatefulSet** y crearía un **PersistentVolumeClaim (PVC)** para montar el volumen en la ruta `/var/lib/postgresql/data`. De esta manera los datos no se perderían aunque se reinicie o elimine el pod.
