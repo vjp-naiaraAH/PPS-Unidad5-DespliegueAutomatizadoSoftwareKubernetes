@@ -4,7 +4,7 @@ Elimino el cluster que he estado usando durante toda la duración del vídeo.
 ```bash
 minikube delete -p multinodo
 ```
-![](/images/1.png)
+![borrado](/images/1.png)
 
 ---
 
@@ -17,15 +17,15 @@ unzip store-app-postgree.zip
 # comprueba que se ha descomprimido
 cd store-app
 ```
-![](/images/2.png)
+![decomprimir](/images/2.png)
 
 Me **descargo** los siguientes archivos:
 + [Dockerfile para crear la imágen](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/Dockerfile)
 + [Manifiesto ***Kubernetes*** para desplegar store-app](https://github.com/jmmedinac03vjp/PuestaProduccionSegura/blob/main/Unidad5-SistemasDesplegadoAutomatizadoSoftware/Actividad-DespliegueAutomatizadoSoftwareKubernetes/files/store-app-k8s.yaml)
-![](/images/3.png)
+![manifiestos](/images/3.png)
 
 Imágen de los archivos ya creados y colocados en la carpeta de store-app (concretamente en a raíz)
-![](/images/4.png)
+![archivos creados](/images/4.png)
 
 Antes de aplicar el manifiesto, entrar dentro del entorno docker y construir la imágen de la app dentro del entorno de Minikube para que ***Kubernetes*** puede usarla localmente ejecutando lo siguiente:
 ```bash
@@ -39,7 +39,7 @@ minikube image load store-app:latest --profile=store-app
 minikube -p store-app image ls
 # debe aparecer la imagen store-app:latest
 ```
-![](/images/5.png)
+![despliegue minikube](/images/5.png)
 
 ---
 
@@ -49,20 +49,20 @@ Hago el despliegue en ***kubernetes***.
 # aplica manifiesto kubernetes de despliegue
 kubectl apply -f store-app-k8s.yaml  
 ```
-![](/images/6.png)
+![despliegue de kubernetes](/images/6.png)
 
 Para comprobar si todo esta funcionando ejecuto:
 ```bash
 minikube -p store-app service store-app
 ```
-![](/images/7.png)
+![para ver si funciona](/images/7.png)
 
 Para comprobar si todo está funcionando ejecuto el comando:
 ```bash
 minikube -p store-app service store-app
 ```
 y se abrirá la aplicación en una web en firefox
-![](/images/8.png)
+![comprobaciones](/images/8.png)
 
 ---
 
@@ -72,61 +72,61 @@ Compruebo el estado del despliegue.
 ```bash
 kubectl get pods
 ```
-![](/images/9.png)
+![estado pods](/images/9.png)
 
 2. **Muestra** todos los **Services (servicios) de Kubernetes, su tipo, IP interna, puerto expuesto y edad.**
 ```bash
 kubectl get svc
 ```
-![](/images/10.png)
+![servicios](/images/10.png)
 
 3. **Muestra** todos los **ConfigMaps existentes en el namespace actual.**
 ```bash
 kubectl get configmap
 ```
-![](/images/11.png)
+![ConfigMaps](/images/11.png)
 
 4. **Muestra** todos los **Secrets** existentes.
 ```bash
 kubectl get secret
 ```
-![](/images/12.png)
+![secrets](/images/12.png)
 
 5. **Muestra** los **logs del Deployment store-app** (toma los logs del primer pod por defecto).
 ```bash
 kubectl logs deploy/store-app
 ```
-![](/images/13.png)
+!logs de deployment[](/images/13.png)
 
 6. **Muestra** los **logs del Deployment de la base de datos.**
 ```bash
 kubectl logs deploy/store-db
 ```
-![](/images/14.png)
+![logs base de datos](/images/14.png)
 
 7. **Permite ejecutar psql** (cliente de PostgreSQL) **dentro del pod de la base de datos.**
 ```bash
 kubectl exec -it deploy/store-db -- psql -U app -d store
 ```
-![](/images/15.png)
+![ejecuta psql](/images/15.png)
 
 8. **Muestra la URL externa para acceder a tu servicio store-app.**
 ```bash
 minikube -p store-app service store-app --url
 ```
-![](/images/16.png)
+![muetra utl](/images/16.png)
 
 9. **Muestra** un **resumen** general **de los recursos más importantes en el namespace** (Pods, Services, Deployments y ReplicaSets).
 ```bash
 kubectl get all
 ```
-![](/images/17.png)
+![resumen recursos](/images/17.png)
 
 10. **Muestra las IPs** internas **de los pods que están detrás del Service store-app.**
 ```bash
 kubectl get endpoints store-app
 ```
-![](/images/18.png)
+![ips internas](/images/18.png)
 
 ### RESPUESTAS A LAS PREGUNTAS
 
@@ -143,4 +143,4 @@ El **initContainer** es un **contenedor** que se ejecuta **antes** del **contene
 Si borro el ***Secret***, la aplicación **no podrá leer la contraseña** de la base de datos. Los pods de `store-app` fallaran al iniciar y entraran en estado **CrashLoopBackOff**, haciendo que la aplicación deje de funcionar.
 
 **5. ¿Qué cambiarías para que la base de datos tenga almacenamiento persistente?**  
-Cambiaría el Deployment de `store-db` por un **StatefulSet** y crearía un **PersistentVolumeClaim (PVC)** para montar el volumen en la ruta `/var/lib/postgresql/data`. De esta manera los datos no se perderían aunque se reinicie o elimine el pod.
+Crearía un **PersistentVolumeClaim (PVC)** y lo montaría en la ruta `/var/lib/postgresql/data` del contenedor de PostgreSQL. Además, es recomendable cambiar el **Deployment** de `store-db` por un **StatefulSet**, ya que está pensado para aplicaciones con estado como las bases de datos.
